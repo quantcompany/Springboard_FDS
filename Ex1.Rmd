@@ -1,0 +1,126 @@
+---
+title: "Data Wrangling Exercise 1: Basic Data Manipulation"
+subtitle: "Example solution"
+author: "Alvaro Fuentes"
+output: html_document
+---
+
+## 0: Load the data in RStudio:
+Save the data set as a CSV file called refine_original.csv and load it in RStudio into a data frame.
+
+
+```{r}
+path_to_data = 'C:\\Users\\Alvaro\\Documents\\Springboard\\data\\refine_original.csv'
+refine <- read.csv(path_to_data, header = TRUE, stringsAsFactors = FALSE)
+
+# Inspecting the data
+dim(refine)
+head(refine)
+tail(refine)
+names(refine)
+```
+
+## 1: Clean up brand names
+Clean up the 'company' column, so all of the misspellings of the brand names are standardized. For example, you can transform the values in the column to be: philips, akzo, van houten and unilever (all lowercase).
+
+```{r}
+#Company column
+refine$company
+
+fix_company <- function(s){
+## this function gets a company name (s) and retuns the correct company name, one of these: philips, akzo, van houten and unilever
+    s <- tolower(s)
+    n <- nchar(s)
+    first_2 <- substr(s,1,2)
+    last_2 <- substr(s,n-1,n)
+    
+    if(last_2 == 'ps'){
+        return('phillips')
+    }else if(first_2 == 'ak'){
+        return('akzo')
+    }else if(first_2 == 'va'){
+        return('van houten')
+    }else{
+        return('unilever')
+        }
+}
+# A couple of tests
+fix_company(refine$company[1])
+fix_company(refine$company[25])
+
+refine$company <- sapply(refine$company, FUN = fix_company)
+refine$company <- factor(refine$company)
+
+```
+
+## 2: Separate product code and number
+Separate the product code and product number into separate columns i.e. add two new columns called product_code and product_number, containing the product code and number respectively.
+
+```{r}
+products_codes <- strsplit(refine$Product.code...number,split = '-')
+
+refine$product_code <- sapply(products_codes, FUN = function(x) x[1])
+refine$product_number <- sapply(products_codes, FUN = function(x) x[2])
+refine$product_number <- as.integer(refine$product_number)
+
+```
+
+## 3: Add product categories
+You learn that the product codes actually represent the following product categories:
+p = Smartphone
+v = TV
+x = Laptop
+q = Tablet
+In order to make the data more readable, add a column with the product category for each record.
+```{r}
+look_up_table <- c('p' = 'Smartphone', 'v' = 'TV', 'x' = 'Laptop', 'q' = 'Tablet')
+refine$product_category <- factor(look_up_table[refine$product_code])
+refine$product_category
+```
+
+## 4: Add full address for geocoding
+You'd like to view the customer information on a map. In order to do that, the addresses need to be in a form that can be easily geocoded. Create a new column full_address that concatenates the three address fields (address, city, country), separated by commas.
+
+```{r}
+refine$full_address <- paste(refine$address, refine$city, refine$country,sep = ', ')
+names(refine)
+
+```
+
+## 5: Create dummy variables for company and product category
+Both the company name and product category are categorical variables i.e. they take only a fixed set of values. In order to use them in further analysis you need to create dummy variables. Create dummy binary variables for each of them with the prefix company_ and product_ i.e.
+
+1.Add four binary (1 or 0) columns for company: company_philips, company_akzo, company_van_houten and company_unilever.
+
+2. Add four binary (1 or 0) columns for product category: product_smartphone, product_tv, product_laptop and product_tablet
+
+```{r}
+## Many ways to do it: dummies package or model.matrix(~refine$company)
+#We will do something more 'step by step'
+
+create_dummy <- function(vec, value){
+    ### Creates a dummy variable for the value (string) in the vector (vec)
+  #  vec <- as.character(vec)
+    return(as.integer(vec == value))
+}
+company_names <- as.character(unique(refine$company))
+
+for(company in company_names){
+    new_var_name <- paste0('company_',company)
+    refine[[new_var_name]] <- create_dummy(refine$company, company)
+}
+
+product_names <- as.character(unique(refine$product_category))
+for(product in product_names){
+    new_var_name <- paste0('product_',product)
+    refine[[new_var_name]] <- create_dummy(refine$product_category, product)
+}
+names(refine)
+```
+
+## 6: Submit the project on Github
+Include your code, the original data as a CSV file refine_original.csv, and the cleaned up data as a CSV file called refine_clean.csv.
+
+```{r}
+write.csv(x = refine, file = 'refine_clean.csv')
+```
