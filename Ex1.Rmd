@@ -28,29 +28,19 @@ Clean up the 'company' column, so all of the misspellings of the brand names are
 ```{r}
 #Company column
 refine$company
+raw_company <- refine$company
+refine$company <- tolower(refine$company) #makes matching easier
 
-fix_company <- function(s){
-## this function gets a company name (s) and retuns the correct company name, one of these: philips, akzo, van houten and unilever
-    s <- tolower(s)
-    n <- nchar(s)
-    first_2 <- substr(s,1,2)
-    last_2 <- substr(s,n-1,n)
-    
-    if(last_2 == 'ps'){
-        return('phillips')
-    }else if(first_2 == 'ak'){
-        return('akzo')
-    }else if(first_2 == 'va'){
-        return('van houten')
-    }else{
-        return('unilever')
-        }
+company_names <- c("philips", "akzo", "van houten", "unilever")
+
+for(name in company_names){
+    refine$company[agrep(name, refine$company, max.distance = 0.3)] <- name
 }
-# A couple of tests
-fix_company(refine$company[1])
-fix_company(refine$company[25])
 
-refine$company <- sapply(refine$company, FUN = fix_company)
+#Compare, to see if it worked
+cbind("Before" = raw_company, "After" = refine$company)
+
+#To factor:
 refine$company <- factor(refine$company)
 
 ```
@@ -102,16 +92,16 @@ Both the company name and product category are categorical variables i.e. they t
 
 create_dummy <- function(vec, value){
     ### Creates a dummy variable for the value (string) in the vector (vec)
-  #  vec <- as.character(vec)
     return(as.integer(vec == value))
 }
-company_names <- as.character(unique(refine$company))
 
+#Dummies for companies
 for(company in company_names){
     new_var_name <- paste0('company_',company)
     refine[[new_var_name]] <- create_dummy(refine$company, company)
 }
 
+#Dummies for products
 product_names <- as.character(unique(refine$product_category))
 for(product in product_names){
     new_var_name <- paste0('product_',product)
