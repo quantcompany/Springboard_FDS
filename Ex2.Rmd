@@ -24,9 +24,6 @@ names(titanic)
 
 #Checking how many missing values we have per column
 sapply(titanic, FUN = function(x) sum(is.na(x)))
-#Missing values per row
-
-#Missing values per column
 ```
 
 ## 1. Port of embarkation

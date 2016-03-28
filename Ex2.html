@@ -175,9 +175,6 @@ sapply(titanic, FUN = function(x) sum(is.na(x)))</code></pre>
 ##         0         0         0         0       263         0         0 
 ##    ticket      fare     cabin  embarked      boat      body home.dest 
 ##         0         1      1014         2       823      1188       564</code></pre>
-<pre class="r"><code>#Missing values per row
-
-#Missing values per column</code></pre>
 </div>
 <div id="port-of-embarkation" class="section level2">
 <h2>1. Port of embarkation</h2>
@@ -192,9 +189,7 @@ titanic$embarked &lt;- factor(titanic$embarked)</code></pre>
 <li>Calculate the mean of the Age column and use that value to populate the missing values.</li>
 <li>Think about other ways you could have populated the missing values in the age column. Why would you pick any of those over the mean (or not)?</li>
 </ol>
-<pre class="r"><code>#library(dplyr)
-#ageMean &lt;- summarise(titanic, m = mean(age, na.rm = T))
-mean_age &lt;- mean(titanic$age, na.rm = TRUE)
+<pre class="r"><code>mean_age &lt;- mean(titanic$age, na.rm = TRUE)
 titanic$age[is.na(titanic$age)] &lt;- mean_age</code></pre>
 </div>
 <div id="lifeboat" class="section level2">
@@ -204,9 +199,18 @@ titanic$age[is.na(titanic$age)] &lt;- mean_age</code></pre>
 </div>
 <div id="cabin" class="section level2">
 <h2>4: Cabin</h2>
-<p>You notice that many passengers don’t have a cabin number associated with them. * Does it make sense to fill missing cabin numbers with a value? * What does a missing value here mean?</p>
+<p>You notice that many passengers don’t have a cabin number associated with them.</p>
+<ul>
+<li>Does it make sense to fill missing cabin numbers with a value?</li>
+<li>What does a missing value here mean?</li>
+</ul>
 <p>You have a hunch that the fact that the cabin number is missing might be a useful indicator of survival. Create a new column has_cabin_number which has 1 if there is a cabin number, and 0 otherwise.</p>
 <pre class="r"><code>titanic$has_cabin_number &lt;- ifelse(is.na(titanic$cabin),0,1)</code></pre>
+</div>
+<div id="submit-the-project-on-github" class="section level2">
+<h2>5: Submit the project on Github</h2>
+<p>Include your code, the original data as a CSV file titanic_original.csv, and the cleaned up data as a CSV file called titanic_clean.csv.</p>
+<pre class="r"><code>write.csv(x = titanic, file = 'titanic_clean.csv')</code></pre>
 </div>
 
 
