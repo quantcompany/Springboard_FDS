@@ -32,12 +32,12 @@ max(diabetes$hdl, na.rm = TRUE)
 hist(diabetes$hdl, main = "HDL Levels", breaks = 20)
 
 # Some Visualization
-ggplot(diabetes) + 
-    geom_histogram(aes(x = Cholesterol), fill = "white", color = "blue") + 
+ggplot(diabetes, aes(x = Cholesterol)) + 
+    geom_histogram(fill = "white", color = "black") + 
     ggtitle("Cholesterol")
 
-ggplot(diabetes) + 
-    geom_density(aes(x = Cholesterol), color = "blue") + 
+ggplot(diabetes, aes(x = Cholesterol)) + 
+    geom_density(color = "blue") + 
     ggtitle("Cholesterol")
 
 ```
@@ -53,8 +53,8 @@ ggplot(diabetes) +
     ggtitle("Frame")
 
 # Removing the NA's bar
-ggplot(diabetes[!is.na(diabetes$frame),]) + 
-    geom_bar(aes(x = frame)) + 
+ggplot(diabetes[!is.na(diabetes$frame),], aes(x = frame)) + 
+    geom_bar() + 
     ggtitle("Frame")
 
 ```
@@ -65,29 +65,29 @@ ggplot(diabetes[!is.na(diabetes$frame),]) +
 ```{r, warning= FALSE}
 
 # Two numerical variables
-ggplot(diabetes) + 
-    geom_point(aes(x = Cholesterol, y = weight))
+ggplot(diabetes, aes(x = Cholesterol, y = weight)) + 
+    geom_point()
 
 # Numerical vs. Categorical
-ggplot(diabetes) + 
-    geom_boxplot(aes(x = gender, y = Cholesterol))
+ggplot(diabetes, aes(x = gender, y = Cholesterol)) + 
+    geom_boxplot()
 
-ggplot(diabetes) + 
-    geom_density(aes(x = Cholesterol, fill = gender), alpha = 0.4)
+ggplot(diabetes, aes(x = Cholesterol, fill = gender)) + 
+    geom_density(alpha = 0.4)
 
-ggplot(diabetes) + 
-    geom_density(aes(x = height, fill = gender), alpha = 0.3)
+ggplot(diabetes, aes(x = height, fill = gender)) + 
+    geom_density(alpha = 0.3)
 
 
 # Categorical vs. Categorical
-ggplot(diabetes[!is.na(diabetes$frame),]) + 
-    geom_bar(aes(x = gender, fill = frame), position = 'dodge')
+ggplot(diabetes[!is.na(diabetes$frame),], aes(x = gender, fill = frame)) + 
+    geom_bar(position = 'dodge')
 
-ggplot(diabetes[!is.na(diabetes$frame),]) + 
-    geom_bar(aes(x = gender, fill = frame), position = 'stack')
+ggplot(diabetes[!is.na(diabetes$frame),], aes(x = gender, fill = frame)) + 
+    geom_bar(position = 'stack')
 
-ggplot(diabetes[!is.na(diabetes$frame),]) + 
-    geom_bar(aes(x = gender, fill = frame), position = 'fill')
+ggplot(diabetes[!is.na(diabetes$frame),], aes(x = gender, fill = frame)) + 
+    geom_bar(position = 'fill')
 ```
 
 
@@ -142,7 +142,6 @@ pnorm(q = c(89.88265, 100, 124.67280), mean = 100, sd = 15)
 
 #20 normal random numbers, mean = 100, sd = 15
 rnorm(20, mean = 100, sd = 15)
-
 
 ```
 For more information on other statistical  distributions and funtions in r, take a look at [this presentation](http://www.biostat.jhsph.edu/~hji/courses/statcomputing/StatFunc.pdf)
